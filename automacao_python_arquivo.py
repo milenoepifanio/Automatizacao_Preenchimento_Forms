@@ -1,0 +1,32 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+import pandas as pd
+
+def preencher_formulario(arquivo_excel):
+    df = pd.read_excel(arquivo_excel)
+
+    for _, dados in df.iterrows():
+        navegador = webdriver.Chrome()
+        link = 'https://docs.google.com/forms/d/e/1FAIpQLScKEtDtf19PAjLimmjOeHVsXTrlG-7aCqSY6uALdrmgWlGfEg/viewform?pli=1'
+        navegador.get(link)
+        time.sleep(2)
+
+        campos = navegador.find_elements(By.CSS_SELECTOR, 'input[type="text"]')
+
+        campos[0].send_keys(dados['nome'])
+        campos[1].send_keys(dados['email'])
+        campos[2].send_keys(str(dados['telefone']))
+        campos[3].send_keys(str(dados['idade']))
+        campos[4].send_keys(dados['sexo'])
+
+        botao_enviar = navegador.find_element(By.XPATH, '//span[text()="Enviar"]/ancestor::div[@role="button"]')
+        botao_enviar.click()
+
+        time.sleep(3)
+        navegador.quit()
+
+    print('Todos os formulários preenchidos. Processo finalizado.')
+
+preencher_formulario(r"C:\Users\mileno\Downloads\dados.xlsx")
